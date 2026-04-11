@@ -9,8 +9,8 @@ import numpy as np
 from ..base import GenerationResult
 from .audio_vae import AudioVAE
 from .config import LMConfig, ModelArgs
-from .dit import UnifiedCFM, VoxCPMLocDiTV2
-from .encoder import VoxCPMLocEnc
+from .dit import UnifiedCFM, BicaraLocDiTV2
+from .encoder import BicaraLocEnc
 from .minicpm import MiniCPMModel
 
 
@@ -102,7 +102,7 @@ class Model(nn.Module):
         enc_config.num_hidden_layers = args.encoder_config.num_layers
         enc_config.kv_channels = args.encoder_config.kv_channels
         enc_config.vocab_size = 0
-        self.feat_encoder = VoxCPMLocEnc(enc_config, input_dim=args.feat_dim)
+        self.feat_encoder = BicaraLocEnc(enc_config, input_dim=args.feat_dim)
 
         # DiT / CFM
         dit_config = LMConfig(**vars(args.lm_config))
@@ -113,7 +113,7 @@ class Model(nn.Module):
         dit_config.kv_channels = args.dit_config.kv_channels
         dit_config.vocab_size = 0
 
-        estimator = VoxCPMLocDiTV2(dit_config, in_channels=args.feat_dim)
+        estimator = BicaraLocDiTV2(dit_config, in_channels=args.feat_dim)
         self.feat_decoder = UnifiedCFM(
             in_channels=args.feat_dim,
             cfm_params=args.dit_config.cfm_config,

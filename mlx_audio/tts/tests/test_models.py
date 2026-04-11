@@ -4341,12 +4341,12 @@ class TestAudioDiTModel(unittest.TestCase):
         )
 
 
-# ── VoxCPM2 ──────────────────────────────────────────────────────
+# ── BicaraV3 ──────────────────────────────────────────────────────
 
 
-def _tiny_voxcpm2_args():
-    """Create a minimal VoxCPM2 config for fast tests."""
-    from mlx_audio.tts.models.voxcpm2.config import (
+def _tiny_bicara_v3_args():
+    """Create a minimal BicaraV3 config for fast tests."""
+    from mlx_audio.tts.models.bicara_v3.config import (
         AudioVAEConfig,
         CFMConfig,
         DiTConfig,
@@ -4400,9 +4400,9 @@ def _tiny_voxcpm2_args():
     )
 
 
-class TestVoxCPM2Config(unittest.TestCase):
+class TestBicaraV3Config(unittest.TestCase):
     def test_from_dict_parses_real_config(self):
-        from mlx_audio.tts.models.voxcpm2.config import ModelArgs
+        from mlx_audio.tts.models.bicara_v3.config import ModelArgs
 
         config = ModelArgs.from_dict(
             {
@@ -4461,7 +4461,7 @@ class TestVoxCPM2Config(unittest.TestCase):
 
     def test_mean_mode_alias(self):
         """dit_config.mean_mode maps to dit_mean_mode."""
-        from mlx_audio.tts.models.voxcpm2.config import ModelArgs
+        from mlx_audio.tts.models.bicara_v3.config import ModelArgs
 
         config = ModelArgs.from_dict(
             {"dit_config": {"mean_mode": True, "cfm_config": {}}}
@@ -4469,18 +4469,18 @@ class TestVoxCPM2Config(unittest.TestCase):
         self.assertTrue(config.dit_config.dit_mean_mode)
 
 
-class TestVoxCPM2Registration(unittest.TestCase):
+class TestBicaraV3Registration(unittest.TestCase):
     def test_model_type_in_remapping(self):
         from mlx_audio.tts.utils import MODEL_REMAPPING
 
-        self.assertIn("voxcpm2", MODEL_REMAPPING)
-        self.assertEqual(MODEL_REMAPPING["voxcpm2"], "voxcpm2")
+        self.assertIn("bicara_v3", MODEL_REMAPPING)
+        self.assertEqual(MODEL_REMAPPING["bicara_v3"], "bicara_v3")
 
 
-class TestVoxCPM2AudioVAE(unittest.TestCase):
+class TestBicaraV3AudioVAE(unittest.TestCase):
     def test_encode_decode_shape(self):
-        from mlx_audio.tts.models.voxcpm2.audio_vae import AudioVAE
-        from mlx_audio.tts.models.voxcpm2.config import AudioVAEConfig
+        from mlx_audio.tts.models.bicara_v3.audio_vae import AudioVAE
+        from mlx_audio.tts.models.bicara_v3.config import AudioVAEConfig
 
         config = AudioVAEConfig(
             encoder_dim=8,
@@ -4505,8 +4505,8 @@ class TestVoxCPM2AudioVAE(unittest.TestCase):
         self.assertIsNotNone(decoded)
 
     def test_sr_conditioning(self):
-        from mlx_audio.tts.models.voxcpm2.audio_vae import AudioVAE
-        from mlx_audio.tts.models.voxcpm2.config import AudioVAEConfig
+        from mlx_audio.tts.models.bicara_v3.audio_vae import AudioVAE
+        from mlx_audio.tts.models.bicara_v3.config import AudioVAEConfig
 
         config = AudioVAEConfig(
             encoder_dim=8,
@@ -4528,8 +4528,8 @@ class TestVoxCPM2AudioVAE(unittest.TestCase):
         self.assertEqual(idx.item(), 0)  # < all boundaries
 
     def test_sanitize_weight_norm_fusion(self):
-        from mlx_audio.tts.models.voxcpm2.audio_vae import AudioVAE
-        from mlx_audio.tts.models.voxcpm2.config import AudioVAEConfig
+        from mlx_audio.tts.models.bicara_v3.audio_vae import AudioVAE
+        from mlx_audio.tts.models.bicara_v3.config import AudioVAEConfig
 
         config = AudioVAEConfig(
             encoder_dim=8,
@@ -4552,10 +4552,10 @@ class TestVoxCPM2AudioVAE(unittest.TestCase):
         self.assertNotIn("encoder.conv_in.weight_v", sanitized)
 
 
-class TestVoxCPM2MiniCPM(unittest.TestCase):
+class TestBicaraV3MiniCPM(unittest.TestCase):
     def test_no_rope(self):
-        from mlx_audio.tts.models.voxcpm2.config import LMConfig
-        from mlx_audio.tts.models.voxcpm2.minicpm import MiniCPMModel
+        from mlx_audio.tts.models.bicara_v3.config import LMConfig
+        from mlx_audio.tts.models.bicara_v3.minicpm import MiniCPMModel
 
         config = LMConfig(
             hidden_size=64,
@@ -4578,8 +4578,8 @@ class TestVoxCPM2MiniCPM(unittest.TestCase):
         self.assertEqual(out.shape, (1, 4, 64))
 
     def test_kv_channels(self):
-        from mlx_audio.tts.models.voxcpm2.config import LMConfig
-        from mlx_audio.tts.models.voxcpm2.minicpm import Attention
+        from mlx_audio.tts.models.bicara_v3.config import LMConfig
+        from mlx_audio.tts.models.bicara_v3.minicpm import Attention
 
         config = LMConfig(
             hidden_size=64,
@@ -4593,10 +4593,10 @@ class TestVoxCPM2MiniCPM(unittest.TestCase):
         self.assertEqual(attn.head_dim, 32)
 
 
-class TestVoxCPM2DiT(unittest.TestCase):
+class TestBicaraV3DiT(unittest.TestCase):
     def test_multi_token_mu(self):
-        from mlx_audio.tts.models.voxcpm2.config import LMConfig
-        from mlx_audio.tts.models.voxcpm2.dit import VoxCPMLocDiTV2
+        from mlx_audio.tts.models.bicara_v3.config import LMConfig
+        from mlx_audio.tts.models.bicara_v3.dit import VoxCPMLocDiTV2
 
         config = LMConfig(
             hidden_size=64,
@@ -4622,8 +4622,8 @@ class TestVoxCPM2DiT(unittest.TestCase):
         self.assertEqual(out.shape, x.shape)
 
     def test_single_token_mu(self):
-        from mlx_audio.tts.models.voxcpm2.config import LMConfig
-        from mlx_audio.tts.models.voxcpm2.dit import VoxCPMLocDiTV2
+        from mlx_audio.tts.models.bicara_v3.config import LMConfig
+        from mlx_audio.tts.models.bicara_v3.dit import VoxCPMLocDiTV2
 
         config = LMConfig(
             hidden_size=64,
@@ -4645,11 +4645,11 @@ class TestVoxCPM2DiT(unittest.TestCase):
         self.assertEqual(out.shape, x.shape)
 
 
-class TestVoxCPM2Model(unittest.TestCase):
+class TestBicaraV3Model(unittest.TestCase):
     def test_init(self):
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
         mx.eval(model.parameters())
 
@@ -4662,9 +4662,9 @@ class TestVoxCPM2Model(unittest.TestCase):
         self.assertEqual(model.fusion_concat_proj.weight.shape, (64, 128))
 
     def test_embed_tokens(self):
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
         mx.eval(model.parameters())
 
@@ -4674,9 +4674,9 @@ class TestVoxCPM2Model(unittest.TestCase):
 
     def test_inference_pipeline(self):
         """Test forward pass through the full inference pipeline (no tokenizer)."""
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
         mx.eval(model.parameters())
 
@@ -4710,9 +4710,9 @@ class TestVoxCPM2Model(unittest.TestCase):
         self.assertEqual(dit_h.shape, (1, 128))  # 2 * dit_hidden_dim
 
     def test_sanitize_populates_rope(self):
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
 
         weights = model.sanitize({})
@@ -4720,9 +4720,9 @@ class TestVoxCPM2Model(unittest.TestCase):
         self.assertGreater(len(rope_keys), 0)
 
     def test_sanitize_sr_boundaries(self):
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
 
         weights = {"audio_vae.decoder._sr_boundaries": mx.array([20000, 30000, 40000])}
@@ -4733,9 +4733,9 @@ class TestVoxCPM2Model(unittest.TestCase):
     def test_voice_design_prefix(self):
         """Instruct param prepends voice description to text."""
         from unittest.mock import MagicMock
-        from mlx_audio.tts.models.voxcpm2.voxcpm2 import Model
+        from mlx_audio.tts.models.bicara_v3.bicara_v3 import Model
 
-        args = _tiny_voxcpm2_args()
+        args = _tiny_bicara_v3_args()
         model = Model(args)
         model.tokenizer = MagicMock()
         model.tokenizer.encode = MagicMock(return_value=[1, 2, 3])

@@ -5,7 +5,7 @@ from .config import LMConfig
 from .minicpm import MiniCPMModel
 
 
-class VoxCPMLocEnc(nn.Module):
+class BicaraLocEnc(nn.Module):
     def __init__(self, config: LMConfig, input_dim: int = 64):
         super().__init__()
         self.config = config

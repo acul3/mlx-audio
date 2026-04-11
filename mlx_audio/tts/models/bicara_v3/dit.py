@@ -40,8 +40,8 @@ class TimestepEmbedding(nn.Module):
         return x
 
 
-class VoxCPMLocDiTV2(nn.Module):
-    """VoxCPM2 Diffusion Transformer with multi-token mu support."""
+class BicaraLocDiTV2(nn.Module):
+    """BicaraV3 Diffusion Transformer with multi-token mu support."""
 
     def __init__(self, config: LMConfig, in_channels: int = 64):
         super().__init__()
@@ -100,7 +100,7 @@ class UnifiedCFM(nn.Module):
         self,
         in_channels: int,
         cfm_params: CFMConfig,
-        estimator: VoxCPMLocDiTV2,
+        estimator: BicaraLocDiTV2,
         mean_mode: bool = False,
     ):
         super().__init__()

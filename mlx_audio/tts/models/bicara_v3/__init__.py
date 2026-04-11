@@ -1,4 +1,4 @@
 from .config import ModelArgs
-from .voxcpm2 import Model
+from .bicara_v3 import Model
 
 ModelConfig = ModelArgs
